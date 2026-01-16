@@ -118,7 +118,7 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
   have h2 : (t - 1) ≠ 0 := right_ne_zero_of_mul h1
   apply sub_ne_zero.mp h2
 
-  example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
+example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
   sorry
 
 example {n : ℤ} : ∃ a, 2 * a ^ 3 ≥ n * a + 7 := by
