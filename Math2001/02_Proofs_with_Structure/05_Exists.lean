@@ -21,15 +21,6 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t < 0) : t ≠ 0 := by
     cancel -x at hxt'
     apply ne_of_gt
     apply hxt'
-<<<<<<< HEAD
-  · have hxt' : 0 < x * (-t) := by
-      calc
-        0 < -x * t := by addarith[hxt]
-        _ = x * (-t) := by ring
-    cancel x at hxt'
-    apply ne_of_lt
-    addarith [hxt']
-=======
   · have h1 : 0 < x * -t := by
       calc
         0 < -x * t := by addarith [hxt]
@@ -38,7 +29,6 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t < 0) : t ≠ 0 := by
     have h3 : t < 0 := by addarith [h2]
     apply ne_of_lt
     apply h3
->>>>>>> 7235ef88f2780bf351bea3ceef58e0e78695f2a1
 
 
 example : ∃ n : ℤ, 12 * n = 84 := by
@@ -54,17 +44,10 @@ example (x : ℝ) : ∃ y : ℝ, y > x := by
 example : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 11 := by
   use 6
   use 5
-<<<<<<< HEAD
-  ring
-
-example (a : ℤ) : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 2 * a + 1 := by
-  use (a + 1)
-=======
   numbers
 
 example (a : ℤ) : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 2 * a + 1 := by
   use a + 1
->>>>>>> 7235ef88f2780bf351bea3ceef58e0e78695f2a1
   use a
   ring
 
@@ -73,17 +56,10 @@ example {p q : ℝ} (h : p < q) : ∃ x, p < x ∧ x < q := by
   constructor
   · calc
       p = (p + p) / 2 := by ring
-<<<<<<< HEAD
-      _ < (p + q) / 2 := by addarith [h]
-  · calc
-      (p + q) / 2 < (q + q) / 2 := by addarith [h]
-      _ = q := by ring
-=======
       _ < (p + q) / 2 := by rel [h]
   · calc
       q = (q + q) / 2 := by ring
       _ > (p + q) / 2 := by rel [h]
->>>>>>> 7235ef88f2780bf351bea3ceef58e0e78695f2a1
 
 example : ∃ a b c d : ℕ,
     a ^ 3 + b ^ 3 = 1729 ∧ c ^ 3 + d ^ 3 = 1729 ∧ a ≠ c ∧ a ≠ d := by
