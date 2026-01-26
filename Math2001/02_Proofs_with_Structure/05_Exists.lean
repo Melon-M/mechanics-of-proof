@@ -21,6 +21,7 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t < 0) : t ≠ 0 := by
     cancel -x at hxt'
     apply ne_of_gt
     apply hxt'
+<<<<<<< HEAD
   · have hxt' : 0 < x * (-t) := by
       calc
         0 < -x * t := by addarith[hxt]
@@ -28,6 +29,16 @@ example {t : ℝ} (h : ∃ a : ℝ, a * t < 0) : t ≠ 0 := by
     cancel x at hxt'
     apply ne_of_lt
     addarith [hxt']
+=======
+  · have h1 : 0 < x * -t := by
+      calc
+        0 < -x * t := by addarith [hxt]
+        _ = x * (-t) := by ring
+    have h2 : 0 < -t := by cancel x at h1
+    have h3 : t < 0 := by addarith [h2]
+    apply ne_of_lt
+    apply h3
+>>>>>>> 7235ef88f2780bf351bea3ceef58e0e78695f2a1
 
 
 example : ∃ n : ℤ, 12 * n = 84 := by
@@ -43,10 +54,17 @@ example (x : ℝ) : ∃ y : ℝ, y > x := by
 example : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 11 := by
   use 6
   use 5
+<<<<<<< HEAD
   ring
 
 example (a : ℤ) : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 2 * a + 1 := by
   use (a + 1)
+=======
+  numbers
+
+example (a : ℤ) : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 2 * a + 1 := by
+  use a + 1
+>>>>>>> 7235ef88f2780bf351bea3ceef58e0e78695f2a1
   use a
   ring
 
@@ -55,10 +73,17 @@ example {p q : ℝ} (h : p < q) : ∃ x, p < x ∧ x < q := by
   constructor
   · calc
       p = (p + p) / 2 := by ring
+<<<<<<< HEAD
       _ < (p + q) / 2 := by addarith [h]
   · calc
       (p + q) / 2 < (q + q) / 2 := by addarith [h]
       _ = q := by ring
+=======
+      _ < (p + q) / 2 := by rel [h]
+  · calc
+      q = (q + q) / 2 := by ring
+      _ > (p + q) / 2 := by rel [h]
+>>>>>>> 7235ef88f2780bf351bea3ceef58e0e78695f2a1
 
 example : ∃ a b c d : ℕ,
     a ^ 3 + b ^ 3 = 1729 ∧ c ^ 3 + d ^ 3 = 1729 ∧ a ≠ c ∧ a ≠ d := by
@@ -75,20 +100,47 @@ example : ∃ a b c d : ℕ,
 
 
 example : ∃ t : ℚ, t ^ 2 = 1.69 := by
-  sorry
+  use 1.3
+  numbers
+
 example : ∃ m n : ℤ, m ^ 2 + n ^ 2 = 85 := by
-  sorry
+  use 7; use 6
+  numbers
 
 example : ∃ x : ℝ, x < 0 ∧ x ^ 2 < 1 := by
-  sorry
+  use -0.5
+  constructor
+  · numbers
+  · numbers
+
 example : ∃ a b : ℕ, 2 ^ a = 5 * b + 1 := by
-  sorry
+  use 4; use 3
+  numbers
 
 example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
-  sorry
+  have H := lt_or_ge x 0
+  obtain hx | hx := H
+  · use x
+    calc
+       x ^ 2 ≥ 0 := by apply sq_nonneg
+       _ > x := by rel [hx]
+  · use (x + 1)
+    calc
+      (x + 1) ^ 2 = x ^ 2 + x + x + 1 := by ring
+      _ >= x + x + 1 := by extra
+      _ > x + x := by extra
+      _ >= x := by extra
 
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
-  sorry
+  obtain ⟨a, ha⟩ := h
+  have h1 : (a - 1) * (t - 1) ≠ 0 := by
+    apply ne_of_lt
+    calc
+      (a - 1) * (t - 1) = (a * t + 1) - a - t := by ring
+      _ < (a + t) - a - t := by rel [ha]
+      _ = 0 := by ring
+  have h2 : (t - 1) ≠ 0 := right_ne_zero_of_mul h1
+  apply sub_ne_zero.mp h2
 
 example {m : ℤ} (h : ∃ a, 2 * a = m) : m ≠ 5 := by
   sorry
