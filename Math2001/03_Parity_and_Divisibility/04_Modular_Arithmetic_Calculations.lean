@@ -45,8 +45,13 @@ example {x : ℤ} : x ^ 3 ≡ x [ZMOD 3] := by
 /-! # Exercises -/
 
 
-example {n : ℤ} (hn : n ≡ 1 [ZMOD 3]) : n ^ 3 + 7 * n ≡ 2 [ZMOD 3] :=
-  sorry
+example {n : ℤ} (hn : n ≡ 1 [ZMOD 3]) : n ^ 3 + 7 * n ≡ 2 [ZMOD 3] := by
+  have h : n ^ 3 + 7 * n ≡ 8 [ZMOD 3] := by
+    calc
+      n ^ 3 + 7 * n ≡ 1 ^ 3 + 7 * 1 [ZMOD 3] := by rel [hn]
+      _ = 2 + 2 * 3 := by ring
+      _ ≡ 2 [ZMOD 3] := by extra
+
 
 example {a : ℤ} (ha : a ≡ 3 [ZMOD 4]) :
     a ^ 3 + 4 * a ^ 2 + 2 ≡ 1 [ZMOD 4] :=
