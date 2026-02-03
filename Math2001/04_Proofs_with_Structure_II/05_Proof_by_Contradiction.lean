@@ -23,7 +23,11 @@ example : ¬ 3 ∣ 13 := by
     calc 13 = 3 * k := hk
       _ ≤ 3 * 4 := by rel [h4]
     numbers at h
-  · sorry
+  · have h :=
+      calc
+        13 = 3 * k := hk
+        _ ≥ 3 * 5 := by rel [h5]
+    numbers at h
 
 example {x y : ℝ} (h : x + y = 0) : ¬(x > 0 ∧ y > 0) := by
   intro h
@@ -35,7 +39,22 @@ example {x y : ℝ} (h : x + y = 0) : ¬(x > 0 ∧ y > 0) := by
 
 
 example : ¬ (∃ n : ℕ, n ^ 2 = 2) := by
-  sorry
+  intro h
+  obtain ⟨n, hn⟩ := h
+  obtain h | h := le_or_succ_le n 1
+  · have contra := by
+      calc
+        2 = n ^ 2 := by rw [hn]
+        _ ≤ 1 ^ 2 := by rel [h]
+        _ = 1 := by numbers
+    numbers at contra
+  · have contra := by
+      calc
+        2 = n ^ 2 := by rw [hn]
+        _ ≥ 2 ^ 2 := by rel [h]
+        _ = 4 := by numbers
+    numbers at contra
+
 
 example (n : ℤ) : Int.Even n ↔ ¬ Int.Odd n := by
   constructor
@@ -53,7 +72,20 @@ example (n : ℤ) : Int.Even n ↔ ¬ Int.Odd n := by
 
 
 example (n : ℤ) : Int.Odd n ↔ ¬ Int.Even n := by
-  sorry
+  constructor
+  · intro h1 h2
+    rw [Int.odd_iff_modEq] at h1
+    rw [Int.even_iff_modEq] at h2
+    have h :=
+      calc
+        0 ≡ n [ZMOD 2] := by rel [h2]
+        _ ≡ 1 [ZMOD 2] := by rel [h1]
+    numbers at h
+  · intro h
+    obtain h1 | h2 := Int.even_or_odd n
+    · contradiction
+    · apply h2
+
 
 example (n : ℤ) : ¬(n ^ 2 ≡ 2 [ZMOD 3]) := by
   intro h
@@ -63,8 +95,20 @@ example (n : ℤ) : ¬(n ^ 2 ≡ 2 [ZMOD 3]) := by
       _ ≡ n ^ 2 [ZMOD 3] := by rel [hn]
       _ ≡ 2 [ZMOD 3] := by rel [h]
     numbers at h -- contradiction!
-  · sorry
-  · sorry
+  · have h :=
+      calc
+        1 = 1 ^ 2 := by numbers
+        _ ≡ n ^ 2 [ZMOD 3] := by rel [hn]
+        _ ≡ 2 [ZMOD 3] := by rel [h]
+    numbers at h
+  · have h :=
+      calc
+        1 ≡ 1 + 3 * 1 [ZMOD 3] := by extra
+        _ = 2 ^ 2 := by numbers
+        _ ≡ n ^ 2 [ZMOD 3] := by rel [hn]
+        _ ≡ 2 [ZMOD 3] := by rel [h]
+    numbers at h
+
 
 example {p : ℕ} (k l : ℕ) (hk1 : k ≠ 1) (hkp : k ≠ p) (hkl : p = k * l) :
     ¬(Prime p) := by
@@ -91,7 +135,15 @@ example (a b : ℤ) (h : ∃ q, b * q < a ∧ a < b * (q + 1)) : ¬b ∣ a := by
   calc b * k = a := by rw [hk]
     _ < b * (q + 1) := hq₂
   cancel b at h1
-  sorry
+  have h2 :=
+    calc
+      b * q < a := hq₁
+      _ = b * k := by rw [hk]
+  cancel b at h2
+  have h3 : q + 1 ≤ k := by addarith [h2]
+  have h4 := not_le_of_lt h1
+  contradiction
+
 
 example {p : ℕ} (hp : 2 ≤ p)  (T : ℕ) (hTp : p < T ^ 2)
     (H : ∀ (m : ℕ), 1 < m → m < T → ¬ (m ∣ p)) :
@@ -103,14 +155,23 @@ example {p : ℕ} (hp : 2 ≤ p)  (T : ℕ) (hTp : p < T ^ 2)
   intro h_div
   obtain ⟨l, hl⟩ := h_div
   have : l ∣ p
-  · sorry
+  · use m
+    calc
+      p = m * l := hl
+      _ = l * m := by ring
   have hl1 :=
     calc m * 1 = m := by ring
       _ < p := hmp
       _ = m * l := hl
   cancel m at hl1
   have hl2 : l < T
-  · sorry
+  · have h := by
+      calc
+        T * l ≤ m * l := by rel [hmT]
+        _ = p := by rw [hl]
+        _ < T ^ 2 := by rel [hTp]
+        _ = T * T := by ring
+    cancel T at h
   have : ¬ l ∣ p := H l hl1 hl2
   contradiction
 
@@ -128,10 +189,14 @@ example : Prime 79 := by
     constructor <;> numbers
   · use 19
     constructor <;> numbers
-  · sorry
-  · sorry
-  · sorry
-  · sorry
+  · use 15
+    constructor <;> numbers
+  · use 13
+    constructor <;> numbers
+  · use 11
+    constructor <;> numbers
+  · use 9
+    constructor <;> numbers
 
 /-! # Exercises -/
 

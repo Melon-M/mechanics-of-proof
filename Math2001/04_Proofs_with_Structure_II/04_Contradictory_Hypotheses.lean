@@ -65,7 +65,15 @@ example {p : ℕ} (hp : 2 ≤ p) (H : ∀ m : ℕ, 1 < m → m < p → ¬m ∣ p
     left
     addarith [hm]
   -- the case `1 < m`
-  sorry
+  · have h : m ≤ p := Nat.le_of_dvd hp' hmp
+    obtain h | h : m = p ∨ m < p := eq_or_lt_of_le h
+    · right
+      apply h
+    · have contra : ¬ m ∣ p := by
+        apply H
+        apply hm_left
+        apply h
+      contradiction
 
 example : Prime 5 := by
   apply prime_test
@@ -83,7 +91,42 @@ example : Prime 5 := by
 
 example {a b c : ℕ} (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     (h_pyth : a ^ 2 + b ^ 2 = c ^ 2) : 3 ≤ a := by
-  sorry
+  have h : a ≤ 2 ∨ a > 2 := by
+    apply le_or_gt
+  obtain ha | ha := h
+  · obtain hb1 | hb1 : b ≤ 1 ∨ b > 1 := by
+      apply le_or_gt
+    · have hc := by
+        calc
+          c ^ 2 = a ^ 2 + b ^ 2 := by rw [h_pyth]
+          _ ≤ 2 ^ 2 + 1 ^ 2 := by rel [ha, hb1]
+          _ < 3 ^ 2 := by numbers
+      cancel 2 at hc
+      have hb1 : b = 1 := by
+        apply le_antisymm
+        apply hb1
+        apply Nat.succ_le_of_lt; apply hb
+      interval_cases a <;> interval_cases c <;> rw [hb1] at h_pyth <;> numbers at h_pyth
+    · have hb1 : 2 ≤ b := by addarith [hb1]
+      have hbc : b ^ 2 < c ^ 2 := by
+        calc
+          b ^ 2 < a ^ 2 + b ^ 2 := by extra
+          _ = c ^ 2 := by rw [h_pyth]
+      cancel 2 at hbc
+      have hbc' : b + 1 ≤ c := by addarith [hbc]
+      have hc2 := by
+        calc
+          c ^ 2 = a ^ 2 + b ^ 2 := by rw [h_pyth]
+          _ ≤ 2 ^ 2 + b ^ 2 := by rel [ha]
+          _ = b ^ 2 + 2 * 2 := by ring
+          _ ≤ b ^ 2 + 2 * b := by rel [hb1]
+          _ < b ^ 2 + 2 * b + 1 := by extra
+          _ = (b + 1) ^ 2 := by ring
+      cancel 2 at hc2
+      apply Nat.not_le_of_gt at hc2
+      contradiction
+  · addarith [ha]
+
 
 /-! # Exercises -/
 
